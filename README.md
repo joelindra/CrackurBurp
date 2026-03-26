@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Burp Suite](https://img.shields.io/badge/Burp%20Suite-Professional-red.svg)](https://portswigger.net/burp)
 
-A premium, modern, and high-performance **Burp Suite Professional Loader & License Manager**. Designed with a focus on aesthetics and ease of use, it automates the complex configuration required to run the latest versions of Burp Suite Pro.
+A premium, modern, and high-performance **Burp Suite Professional Loader & License Manager**. Designed with a focus on aesthetics and ease of use, it automates the complex configuration required to run the latest versions of Burpsuite Pro.
 
 ---
 
