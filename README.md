@@ -6,6 +6,32 @@
 
 A premium, modern, and high-performance **Burp Suite Professional Loader & License Manager**. Designed with a focus on aesthetics and ease of use, it automates the complex configuration required to run the latest versions of Burpsuite Pro.
 
+### 📊 The Execution Flow
+The following sequence diagram illustrates the interaction between the OS, JVM, our Agent, and the target application:
+
+```mermaid
+sequenceDiagram
+    participant OS as Operating System
+    participant JVM as Java Virtual Machine
+    participant Agent as CrackurBurp Agent
+    participant Target as Burp Suite Pro
+    participant Server as PortSwigger License Server
+
+    OS->>JVM: Launch with -javaagent:crackurburp.jar
+    JVM->>Agent: Execute premain()
+    Agent->>JVM: Register ClassTransformer
+    
+    JVM->>Target: Load Core Classes (Intercepted)
+    Agent-->>JVM: Return Patched Bytecode (ASM)
+    
+    Target->>JVM: Call BigInteger.oddModPow()
+    JVM->>Target: Return Patched RSA Key
+    
+    Target->>Server: Validate License Request
+    Agent->>Target: Intercept HTTP (Filter) & Mock Response
+    Target->>Target: License Validated! ✅
+```
+
 ---
 
 ## ✨ Key Features
