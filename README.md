@@ -1,4 +1,4 @@
-# Anonre Burpsuite Activation Console 🛡️
+# Burpsuite Activation Console 🛡️
 
 [![Java Version](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://www.oracle.com/java/technologies/javase-downloads.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
