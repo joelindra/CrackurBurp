@@ -1,303 +1,177 @@
-# BurpSuite Activation Console v1.2 🛡️
+# CrackurBurp — Activation & Launcher Console v1.13
 
-[![Java Version](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://www.oracle.com/java/technologies/javase-downloads.html)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Burp Suite](https://img.shields.io/badge/Burp%20Suite-Professional-red.svg)](https://portswigger.net/burp)
-[![Version](https://img.shields.io/badge/Version-v1.2-purple.svg)](https://github.com/joelindra)
+[![Version](https://img.shields.io/badge/Version-v1.13-5E6AD2.svg)](https://github.com/joelindra/CrackurBurp/releases)
+[![Java Version](https://img.shields.io/badge/Java-17%2B%20%7C%2021%20%7C%2022-orange.svg)](https://adoptium.net/)
+[![Build](https://img.shields.io/badge/Build-Maven-C71A36.svg)](pom.xml)
+[![Burp Suite](https://img.shields.io/badge/Burp%20Suite-Professional-FF6633.svg)](https://portswigger.net/burp)
+[![License](https://img.shields.io/badge/License-MIT-3ECF8E.svg)](LICENSE)
 
-A premium, modern, and feature-rich **Burp Suite Professional Loader & License Manager**. Built with a focus on aesthetics, usability, and automation, this tool streamlines the activation process for Burp Suite Professional.
+A minimalist, precision-crafted **Burp Suite Professional Loader & Offline Activation Console**. Designed with a clean graphite interface, reliable cross-directory process launching, and seamless Java agent bytecode patching.
 
-## 📸 Preview & Demo
-
-https://github.com/user-attachments/assets/ffc6397b-1ef2-488d-bc89-fb5b52ffb335
-
-*Modern Dark UI with Accent Highlights*
----
-
-## 📊 How It Works
-
-The following diagram illustrates the activation flow:
+## How It Works
 
 ```mermaid
 sequenceDiagram
     participant User
-    participant App as Activation Console
+    participant Console as CrackurBurp (KeygenForm)
+    participant Agent as Java Agent (Loader / Filter)
     participant Burp as Burp Suite Pro
-    participant Server as PortSwigger Server
 
-    User->>App: Launch Application
-    App->>App: Generate License Key
-    User->>Burp: Paste License Key
-    Burp->>User: Request Activation Code
-    User->>App: Paste Activation Request
-    App->>App: Generate Activation Response
-    User->>Burp: Paste Activation Response
-    Burp->>Server: Validate License
-    Server-->>Burp: License Valid ✅
-    Burp-->>User: Professional Features Unlocked
+    User->>Console: Launch JAR (from any working directory)
+    Console->>Console: Resolve absolute paths (Loader, Java, Burp JAR)
+    Console->>Console: Generate License Key for Licensee
+    User->>Console: Click "Run" (or Auto Run)
+    Console->>Agent: Spawn JVM in appDir with -javaagent:<loaderJar>
+    Agent->>Burp: Patch runtime verification via ASM
+    User->>Burp: Paste License Key & select Manual Activation
+    Burp-->>User: Output Activation Request
+    User->>Console: Paste Activation Request
+    Console-->>User: Auto-generate Activation Response
+    User->>Burp: Paste Activation Response -> Activated
 ```
 
 ---
 
-## ✨ Features
+## Key Features
 
-### 🎨 Premium Interface
-- **Dark Theme UI** - Modern, eye-friendly interface built with [FlatLaf](https://github.com/JFormDesigner/FlatLaf)
-- **2-2-1 Layout** - Optimized workspace: Command + License | Request + Response | Actions
-- **Status Badges** - Real-time system information in footer (JDK 22 status, OS, session ID)
-- **Hover Effects** - Smooth micro-interactions and visual feedback
+### Minimalist Precision UI
+- **Graphite Split-Card Layout** — Clean sub-pixel `1px` hairline cards with dedicated header bars, subtle dividers, and flush monospace code surfaces powered by [FlatLaf](https://github.com/JFormDesigner/FlatLaf) and custom Java2D rendering.
+- **Restrained Visual Hierarchy** — Calm neutral surfaces paired with subtle `6px` semantic status indicators (ready, update available, offline, or error) without harsh neon glare.
+- **Instant Clipboard Feedback** — Dedicated **Copy**, **Paste**, and **Regenerate** controls with inline `Copied` confirmation.
 
-### 🔑 License Management
-- **Auto-Generate License** - Instant license key generation based on your name
-- **Activation Processor** - Convert activation requests to valid responses
-- **Copy/Paste/Export** - Quick clipboard operations and file export for all text areas
-- **Live Preview** - See license updates in real-time as you type
+### Reliable Cross-Directory Launcher
+- **Absolute URI Path Resolution** — Resolves the loader JAR, `appDir`, Java executable, and newest `burpsuite_*.jar` via `Paths.get(codeSource.getLocation().toURI()).toAbsolutePath().normalize()`, preserving spaces and literal `+` characters.
+- **Explicit Child Working Directory** — Launches Burp Suite via `ProcessBuilder` anchored to `appDir`, so running `java -jar C:\path\to\BurpLoaderKeygen.jar` from *any* shell directory works out of the box.
+- **Non-Blocking Crash Diagnostics** — Redirects child JVM output to a temporary log (`crackurburp-launch-*.log`) and monitors exit codes on a background thread. If startup fails, a scrollable diagnostic dialog displays the exit code, log path, and output without freezing the UI.
 
-### ⚡ Productivity Tools
-- **One-Click Launch** - Run Burp Suite directly from the console
-- **Script Generator** - Create `.bat` and `.vbs` startup scripts for silent background execution
-- **Keyboard Shortcuts** - Fast access to common operations
-- **Help Dialog** - Built-in documentation and shortcut reference
-
-### 🛠️ Smart Detection
-- **JDK 22 Checker** - Automatic detection of JDK 22 installation (required for latest Burp versions)
-- **OS Detection** - Display current operating system
-- **Session Tracking** - Unique session ID for each application instance
-- **Quick Links** - Direct access to Burp Suite downloads and GitHub repository
+### License & Automation Tools
+- **Live Licensee Customization** — Edit the **Licensee** name at any time to regenerate a valid license key on the fly.
+- **Reactive Offline Activation** — Pasting a manual activation request immediately computes the signed activation response.
+- **Auto Run & Update Detection** — Checks PortSwigger releases asynchronously in the background and supports persistent **Auto Run** and **Ignore Update** settings stored in `.anonre.config.ini` alongside the JAR.
+- **One-Click Start Scripts** — Generates `burp.bat` and a windowless `Burpsuite Professional.vbs` launcher directly inside the application directory.
 
 ---
 
-## ⌨️ Keyboard Shortcuts
+## UI Overview
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl + R` | Run Burp Suite |
-| `Ctrl + L` | Copy License Key |
-| `Ctrl + P` | Paste Activation Request |
-| `Ctrl + Shift + C` | Clear All Fields |
+```text
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ [⚡] CrackurBurp [v1.13] Activation & Launcher Console  [● Status] [Auto][Ign]│
+├──────────────────────────────────────────────────────────────────────────────┤
+│ ┌──────────────────────────────────────────────────────────────────────────┐ │
+│ │ ["C:\...\java.exe" ... "-javaagent:...\loader.jar" ...]  [Copy] [▶ Run]  │ │
+│ │ Licensee [ Licensed To Anonre       ]   ● burpsuite_pro_v2026.x · Ready  │ │
+│ └──────────────────────────────────────────────────────────────────────────┘ │
+│                                                                              │
+│ ┌────────────────────────────────────┐  ┌──────────────────────────────────┐ │
+│ │ License Key     [Regenerate][Copy] │  │ Activation Request [Paste][Copy] │ │
+│ ├────────────────────────────────────┤  ├──────────────────────────────────┤ │
+│ │ <auto-generated license key...>    │  │ <paste manual request here...>   │ │
+│ └────────────────────────────────────┘  └──────────────────────────────────┘ │
+│                                                                              │
+│ ┌──────────────────────────────────────────────────────────────────────────┐ │
+│ │ Activation Response                                               [Copy] │ │
+│ ├──────────────────────────────────────────────────────────────────────────┤ │
+│ │ <auto-generated activation response...>                                  │ │
+│ └──────────────────────────────────────────────────────────────────────────┘ │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ JDK 22.0.2 · Windows 11 · github.com/joelindra/CrackurBurp [Scripts] [Clear] │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- **Java 17+** (JDK 22 recommended for latest Burp Suite versions)
-- **Burp Suite Professional JAR** (e.g., `burpsuite_pro_v2026.x.jar`)
+- **Java 17 or newer** (JDK 21 or JDK 22 recommended for latest Burp Suite releases)
+- **Burp Suite Professional JAR** (named `burpsuite_*.jar`, placed in the same directory as the loader)
 
-### Installation
+### Usage
 
-1. **Download** the latest release:
-   ```bash
-   # Place in your Burp Suite directory
-   BurpLoaderKeygen.jar
+1. **Place Files Together**  
+   Put the loader JAR (e.g., `BurpLoaderKeygen.jar` or `burploader-new.jar`) in the same folder as your `burpsuite_pro_v2026.x.jar`.
+
+2. **Start the Console**  
+   Double-click the loader JAR or launch it from any terminal directory:
+   ```powershell
+   java -jar path\to\BurpLoaderKeygen.jar
    ```
 
-2. **Launch** the application:
-   ```bash
-   java -jar BurpLoaderKeygen.jar
-   ```
+3. **Launch & Activate Burp Suite**
+   - *(Optional)* Customize the **Licensee** field — the **License Key** updates automatically.
+   - Click **Run** to start Burp Suite Professional with the Java agent attached.
+   - Copy the **License Key**, paste it into Burp Suite, and click **Next**.
+   - Click **Manual activation** in Burp Suite and copy the request string.
+   - Click **Paste** in the **Activation Request** card — the **Activation Response** is generated automatically.
+   - Click **Copy** on **Activation Response**, paste it back into Burp Suite, and finish activation.
 
-### Activation Process
-
-1. **Enter License Name**
-   - Type your preferred name in the **LICENSED TO** field
-   - License key auto-generates
-
-2. **Copy License Key**
-   - Click **Copy** button or press `Ctrl + L`
-   - Paste into Burp Suite when prompted
-
-3. **Generate Activation Response**
-   - In Burp Suite, choose **Manual Activation**
-   - Copy the **Activation Request**
-   - Paste into the **ACTIVATION REQUEST** field (or press `Ctrl + P`)
-   - Click **Copy** on the **ACTIVATION RESPONSE**
-
-4. **Complete Activation**
-   - Paste the response back into Burp Suite
-   - Click **Activate** - Done! ✅
-
-### Create Startup Script
-
-For convenient future launches:
-
-1. Click **Create Start Script**
-2. Two files are generated:
-   - `burp.bat` - Batch file launcher
-   - `Burpsuite Professional.vbs` - Silent VBS launcher (no console window)
-3. Double-click either file to launch Burp Suite
+4. **Create Desktop / Silent Launchers *(Optional)***  
+   Click **Create Scripts** in the footer to generate:
+   - `burp.bat` — Direct batch launcher anchored to the Burp directory.
+   - `Burpsuite Professional.vbs` — Silent launcher (runs without keeping a console window open).
 
 ---
 
-## 📁 Project Structure
-
-```
-BurpLoaderKeygen/
-├── src/
-│   └── com/anonre/burploaderkeygen/
-│       ├── KeygenForm.java      # Main UI (v1.2)
-│       ├── Keygen.java          # License generation logic
-│       ├── Loader.java          # Java agent for bytecode patching
-│       └── Filter.java          # HTTP response interceptor
-├── lib/
-│   └── flatlaf-3.4.jar          # UI framework
-├── build/
-│   └── (compiled classes)
-└── BurpLoaderKeygen.jar         # Packaged application
-```
-
----
-
-## 🎯 UI Layout
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  Activation Console                                         │
-│  BurpSuite Professional · License Manager v1.2              │
-├─────────────────────────────────────────────────────────────┤
-│  ┌──────────────────────┐  ┌──────────────────────┐        │
-│  │ LAUNCH COMMAND       │  │ LICENSE KEY          │        │
-│  │ [java -jar ...] [Run]│  │ [Copy][Paste][Export]│        │
-│  │ LICENSED TO: [name]  │  │ [generated key...]   │        │
-│  └──────────────────────┘  └──────────────────────┘        │
-│                                                             │
-│  ┌──────────────────────┐  ┌──────────────────────┐        │
-│  │ ACTIVATION REQUEST   │  │ ACTIVATION RESPONSE  │        │
-│  │ [Copy][Paste]        │  │ [Copy][Paste]        │        │
-│  │ [paste request here] │  │ [generated response] │        │
-│  └──────────────────────┘  └──────────────────────┘        │
-│                                                             │
-│  [Create Start Script]  [Clear Fields]  [?]                │
-├─────────────────────────────────────────────────────────────┤
-│  [JDK 22: Installed] [Download Burp] [GitHub] [Win11] [ID] │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 🔧 Advanced Usage
-
-### Java Agent Mode
-
-The JAR can also function as a Java agent for runtime bytecode patching:
-
-```bash
-java -javaagent:BurpLoaderKeygen.jar -jar burpsuite_pro.jar
-```
-
-This mode intercepts and patches:
-- RSA key validation (BigInteger.oddModPow)
-- License server HTTP responses
-- Certificate validation
-
-### Export License Data
-
-Save your license information for backup:
-
-1. Click **Export** button on any text area
-2. Choose save location
-3. Data saved as `.txt` file
-
----
-
-## 🖥️ System Requirements
+## System Requirements
 
 | Component | Requirement |
 |-----------|-------------|
-| **Java Runtime** | JDK 17, 21, or 22+ |
+| **Java Runtime** | JDK 17, 21, or 22+ (64-bit) |
 | **Operating System** | Windows 10/11, Linux, macOS |
-| **Memory** | 2GB RAM minimum |
-| **Burp Suite** | Professional Edition (any recent version) |
-
-### JDK 22 Status Indicator
-
-The footer badge shows JDK 22 installation status:
-- 🟢 **Green** - JDK 22 detected and ready
-- 🔴 **Red** - JDK 22 not found (install for best compatibility)
+| **Memory** | 4 GB RAM minimum recommended for Burp Suite |
+| **Target File Naming** | `burpsuite_*.jar` in the same folder as the loader JAR |
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
-### "JDK 22: Not Installed"
-- Download JDK 22 from [Oracle](https://www.oracle.com/java/technologies/downloads/) or [Adoptium](https://adoptium.net/)
-- Ensure `java` is in your system PATH
-- Restart the application after installation
-
-### License Not Accepted
-- Verify you copied the entire license key
-- Ensure no extra spaces or line breaks
-- Try regenerating with a different name
-
-### Activation Request Fails
-- Make sure you're using the latest Burp Suite version
-- Check that the request is complete (no truncation)
-- Use the **Paste** button to ensure clean clipboard data
-
-### Script Generation Error
-- Ensure write permissions in the current directory
-- Check antivirus isn't blocking `.bat`/`.vbs` creation
-- Try running as administrator (Windows)
+- **`Burp Suite JAR Not Found` dialog on Run**  
+  Ensure your Burp JAR is in the same directory as the loader JAR and its filename starts with `burpsuite_` and ends with `.jar` (for example, `burpsuite_pro_v2026.10.1.jar`).
+- **`Burp Suite Launch Failed (Exit Code ...)`**  
+  Inspect the error output shown directly in the popup dialog or open the referenced `crackurburp-launch-*.log` file in your temp folder. Verify your installed Java version is 17 or newer (`java -version`).
+- **Update badge shows `Offline`**  
+  The console could not reach `portswigger.net` (e.g., offline environment or firewall). Offline launching and manual license activation continue to work normally.
+- **Script creation fails**  
+  Verify write permissions in the folder containing the loader JAR and ensure antivirus software is not blocking `.bat` or `.vbs` file creation.
 
 ---
 
-## 📝 Changelog
+## Changelog
 
-### v1.2 (Current)
-- ✨ Added Copy/Paste/Export buttons to all text areas
-- ✨ Help dialog with keyboard shortcuts
-- ✨ Keyboard shortcuts (Ctrl+R, Ctrl+L, Ctrl+P, Ctrl+Shift+C)
-- 🎨 Redesigned footer with horizontal badge layout
-- 🔍 JDK 22 installation checker
-- 🔗 Burp Suite download link
-- 📊 Session ID tracking
-- 🎯 Improved 2-2-1 layout structure
-- 🐛 Bug fixes and performance improvements
+### v1.13 (Current)
+- **Fixed cross-directory silent launch failure (#3)**: Resolved loader, Java executable, and `burpsuite_*.jar` as normalized absolute paths via `toURI()`, preserving spaces and `+` characters without `URLDecoder`.
+- **Added unified `ProcessBuilder` launch helper**: Sets `.directory(appDir.toFile())`, logs stdout/stderr to a temp file, and reports nonzero child JVM exits on the Swing EDT via a scrollable error dialog.
+- **Anchored config & scripts to `appDir`**: `.anonre.config.ini`, `burp.bat`, and `Burpsuite Professional.vbs` now always resolve relative to the loader's directory.
+- **Minimalist precision UI redesign**: Replaced heavy nested borders and neon accents with a clean graphite split-card architecture, pixel-centered controls, live **Licensee** input, and thread-safe EDT updates.
+
+### v1.12
+- Maven Shade build integration with FlatLaf dark theme.
+- Automatic PortSwigger Pro release version check and Auto Run support.
+
+### v1.2
+- Added clipboard actions, startup script generator, and status indicators.
 
 ### v1.1
-- Initial release with dark theme UI
-- License key generation
-- Activation request/response processing
-- Script generator
+- Initial release with dark UI, license key generator, and offline activation request/response processor.
 
 ---
 
-## 📄 License
+## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
-## ⚠️ Disclaimer
-
-This tool is for **educational and research purposes only**. 
-
-- Use at your own risk
-- The author is not responsible for any misuse or damage
-- Burp Suite is a trademark of PortSwigger Ltd
-- This project is not affiliated with or endorsed by PortSwigger
+Distributed under the MIT License. See `LICENSE` for details.
 
 ---
 
-## 🙏 Acknowledgments
+## Disclaimer
 
-- [FlatLaf](https://github.com/JFormDesigner/FlatLaf) - Modern UI framework
-- [PortSwigger](https://portswigger.net/) - Burp Suite Professional
-- Community contributors and testers
+This project is provided strictly for **educational and security research purposes**.
+- Use at your own risk; the author assumes no liability for misuse or damages.
+- Burp Suite is a registered trademark of PortSwigger Ltd. This project is not affiliated with or endorsed by PortSwigger.
 
 ---
 
-## 📧 Contact
+## Contact
 
 **Author:** Anonre  
 **GitHub:** [@joelindra](https://github.com/joelindra)
-
----
-
-<div align="center">
-
-**⭐ If you find this useful, consider starring the repo! ⭐**
-
-[⬆ Back to Top](#burpsuite-activation-console-v12-🛡️)
-
-</div>
